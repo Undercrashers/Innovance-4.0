@@ -372,6 +372,7 @@ export default function InnovanceBollywood() {
     seconds: 0,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     const targetDate = new Date("2026-01-17T00:00:00");
@@ -557,18 +558,16 @@ export default function InnovanceBollywood() {
             className="flex-1 w-full max-w-md relative"
           >
             <div className="bg-black p-2 pb-12 rotate-3 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] hover:rotate-0 transition-transform duration-500">
-              {/* Placeholder for the team image, styled like a polaroid */}
-              <div className="bg-gray-200 aspect-[4/3] border-2 border-gray-800 flex items-center justify-center overflow-hidden grayscale contrast-125 relative group">
-                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-multiply opacity-80 group-hover:scale-110 transition-transform duration-700"></div>
-                <div className="z-10 text-center p-4">
-                  <Users
-                    size={64}
-                    className="mx-auto mb-2 text-gray-800 animate-bounce"
-                  />
-                  <span className="text-3xl font-black text-gray-800 uppercase bg-white px-2">
-                    The Crew
-                  </span>
-                </div>
+              {/* Team image from public folder */}
+              <div
+                className="bg-gray-200 aspect-[4/3] border-2 border-gray-800 flex items-center justify-center overflow-hidden relative group cursor-pointer"
+                onClick={() => setIsImageModalOpen(true)}
+              >
+                <img
+                  src="/iotcardlead.png"
+                  alt="The Crew"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
               </div>
               <div className="text-white text-center font-handwriting text-2xl mt-4">
                 Our Heroes & Heroines
@@ -920,6 +919,38 @@ export default function InnovanceBollywood() {
           </div>
         </div>
       </section>
+
+      {/* --- Image Modal --- */}
+      {isImageModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300"
+          onClick={() => setIsImageModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-h-screen flex items-center justify-center animate-in zoom-in duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setIsImageModalOpen(false)}
+              className="absolute -top-10 right-0 text-white hover:text-red-500 transition-colors z-10"
+            >
+              <X size={32} />
+            </button>
+
+            {/* Image Container - 2.35:1 aspect ratio */}
+            <div className="bg-black p-2 shadow-[0_0_50px_rgba(255,255,255,0.3)] w-full max-w-7xl">
+              <div className="aspect-[2.35/1] bg-gray-900 flex items-center justify-center overflow-hidden">
+                <img
+                  src="/iotcardlead.png"
+                  alt="The Crew - Full View"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* --- Footer / Countdown --- */}
       <footer className="bg-black text-white py-16 text-center border-b-[20px] border-red-600 relative overflow-hidden">
