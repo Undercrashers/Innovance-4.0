@@ -980,7 +980,7 @@ export default function InnovanceBollywood() {
                 <Info size={20} />
               </a>
             </div>
-            <p>© 2025 IOT LAB. Directed by Tech Team.</p>
+            <p>© 2025 IOT LAB. Directed by Web Team</p>
           </div>
         </div>
       </footer>
