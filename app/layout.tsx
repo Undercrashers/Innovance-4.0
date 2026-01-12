@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Innovance 4.0",
-  description: "Web Team",
+  description: "Jab Tech Meet Tadka",
 };
 
 export default function RootLayout({

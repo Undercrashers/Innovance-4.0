@@ -21,9 +21,17 @@ import {
   X,
   ArrowLeft,
   Bell,
+  CheckCircle,
+  User,
+  School,
+  Phone,
+  Mail,
+  Hash,
+  Copy,
+  Check,
 } from "lucide-react";
 
-// --- Custom Styles for Animations ---
+
 const AnimationStyles = () => (
   <style>{`
     @keyframes float {
@@ -64,7 +72,6 @@ const AnimationStyles = () => (
   `}</style>
 );
 
-// --- Components ---
 
 const RevealOnScroll = ({
   children,
@@ -174,53 +181,364 @@ const NavLink = ({
   </a>
 );
 
-// --- Ticket Coming Soon Page ---
-const TicketComingSoon = ({ onBack }: { onBack: () => void }) => (
-  <div className="min-h-screen bg-black text-yellow-400 flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
-    {/* Retro Background Pattern */}
-    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-yellow-500 via-red-500 to-transparent"></div>
+// --- NEW: Registration Page Component ---
 
-    <div className="z-10 max-w-2xl w-full text-center border-8 border-double border-yellow-500 p-8 md:p-12 bg-[#1a1a1a] shadow-[0_0_50px_rgba(234,179,8,0.3)] animate-in zoom-in duration-500">
-      <button
-        onClick={onBack}
-        className="absolute top-4 left-4 text-white hover:text-red-500 flex items-center gap-2 font-bold uppercase tracking-widest transition-colors"
-      >
-        <ArrowLeft /> Go Back
-      </button>
+interface InputFieldProps {
+  label: string;
+  icon: React.ComponentType<{ size: number }>;
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
+  options?: string[] | null;
+}
 
-      <div className="mb-8 animate-pulse">
-        <Film size={64} className="mx-auto text-red-600 mb-4" />
-        <h1 className="text-5xl md:text-7xl font-black uppercase text-red-600 drop-shadow-[4px_4px_0px_#fff] transform -rotate-2">
-          INTERVAL
-        </h1>
+const InputField = ({
+  label,
+  icon: Icon,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  options = null,
+}: InputFieldProps) => (
+  <div className="mb-6 relative">
+    <label className="block font-black uppercase text-sm mb-2 text-gray-800 tracking-wider">
+      {label} <span className="text-red-600">*</span>
+    </label>
+    <div className="relative group">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-red-600 transition-colors pointer-events-none">
+        <Icon size={20} />
       </div>
 
-      <h2 className="text-2xl md:text-4xl font-bold mb-6 text-white uppercase tracking-wider">
-        Tickets Releasing Soon!
-      </h2>
+      {options ? (
+        <select
+          value={value}
+          onChange={onChange}
+          className="w-full bg-yellow-50 border-4 border-black px-4 py-3 pl-10 font-bold text-black focus:outline-none focus:border-red-600 focus:bg-white shadow-[4px_4px_0px_rgba(0,0,0,0.1)] focus:shadow-[4px_4px_0px_#dc2626] transition-all appearance-none cursor-pointer"
+        >
+          <option value="">Select {label}</option>
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          className="w-full bg-white border-4 border-black px-4 py-3 pl-10 font-bold text-black placeholder-gray-400 focus:outline-none focus:border-red-600 focus:bg-yellow-50 shadow-[4px_4px_0px_rgba(0,0,0,0.1)] focus:shadow-[4px_4px_0px_#dc2626] transition-all"
+        />
+      )}
 
-      <p className="text-lg md:text-xl text-gray-400 mb-8 border-t-2 border-b-2 border-gray-700 py-4">
-        "Chill bro! The box office opens shortly. Don't miss the first day,
-        first show!"
-      </p>
-
-      <div className="bg-yellow-400 text-black p-1 inline-block transform rotate-1 mb-8 animate-bounce">
-        <div className="border-2 border-black px-6 py-2 font-black text-xl uppercase">
-          Coming Jan 2026
+      {options && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-black">
+          <ChevronDown size={20} />
         </div>
-      </div>
-
-      <div className="flex justify-center">
-        <button className="bg-red-600 text-white px-8 py-4 font-black uppercase text-lg border-4 border-white hover:bg-white hover:text-red-600 transition-colors flex items-center gap-2 shadow-[4px_4px_0px_#fbbf24] hover:shadow-[6px_6px_0px_#fbbf24] hover:-translate-y-1">
-          <Bell className="animate-ping absolute opacity-75" />
-          <Bell className="relative" /> Notify Me When Open
-        </button>
-      </div>
+      )}
     </div>
   </div>
 );
 
-// --- Data ---
+const generateTicketId = () => {
+  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = "";
+  for (let i = 0; i < 4; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+const RegistrationForm = ({ onBack }: { onBack: () => void }) => {
+  interface FormDataType {
+    fullName: string;
+    rollNumber: string;
+    email: string;
+    phone: string;
+    university: string;
+    gender: string;
+  }
+
+  interface RegistrationDetailsType extends FormDataType {
+    uniqueId: string;
+    timestamp: string;
+  }
+
+  const [formData, setFormData] = useState<FormDataType>({
+    fullName: "",
+    rollNumber: "",
+    email: "",
+    phone: "",
+    university: "",
+    gender: "",
+  });
+  const [registrationDetails, setRegistrationDetails] =
+    useState<RegistrationDetailsType | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check Local Storage on Mount
+  useEffect(() => {
+    const savedRegistration = localStorage.getItem("innovance_reg_v1");
+    if (savedRegistration) {
+      setRegistrationDetails(JSON.parse(savedRegistration));
+    }
+  }, []);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const copyToClipboard = () => {
+    if (registrationDetails?.uniqueId) {
+      // Create a temporary text area to copy from (for iframe compatibility)
+      const textArea = document.createElement("textarea");
+      textArea.value = registrationDetails.uniqueId;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy", err);
+      }
+      document.body.removeChild(textArea);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    if (Object.values(formData).every((val) => val !== "")) {
+      // 1. Generate 4-digit ID
+      const uniqueId = generateTicketId();
+
+      // 2. Prepare payload
+      const finalData: RegistrationDetailsType = {
+        ...formData,
+        uniqueId,
+        timestamp: new Date().toISOString(),
+      };
+
+      // 3. Send to backend API
+      fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(finalData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            return response.json().then((data) => {
+              throw new Error(data.error || "Registration failed");
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // Save to localStorage AND MongoDB Atlas via API
+          localStorage.setItem("innovance_reg_v1", JSON.stringify(finalData));
+          setRegistrationDetails(finalData);
+        })
+        .catch((errorObj) => {
+          console.error("Registration error:", errorObj);
+          setError(
+            errorObj.message || "Registration failed. Please try again."
+          );
+        });
+    } else {
+      setError("Oye! Fill all the details first!");
+    }
+  };
+
+  if (registrationDetails) {
+    return (
+      <div className="min-h-screen bg-[#fdf6e3] flex items-center justify-center p-4">
+        <div className="max-w-xl w-full text-center animate-in zoom-in duration-500">
+          <div className="bg-white border-4 border-black p-8 shadow-[12px_12px_0px_#000] relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-4 bg-red-600 border-b-4 border-black"></div>
+            <div className="absolute bottom-0 left-0 w-full h-4 bg-red-600 border-t-4 border-black"></div>
+
+            <div className="bg-teal-400 w-24 h-24 rounded-full flex items-center justify-center border-4 border-black mx-auto mb-6 shadow-[4px_4px_0px_rgba(0,0,0,0.2)]">
+              <CheckCircle size={48} className="text-black" />
+            </div>
+
+            <h2 className="text-4xl font-black text-red-700 uppercase mb-2">
+              Registration Successful!
+            </h2>
+            <p className="text-gray-600 font-bold mb-6">
+              Welcome to the show, {registrationDetails.fullName}!
+            </p>
+
+            <div className="bg-yellow-100 p-6 border-4 border-dashed border-black mb-8 relative">
+              <p className="text-sm font-black uppercase text-gray-500 mb-2">
+                Your Unique Payment ID
+              </p>
+
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-5xl font-black tracking-widest text-black">
+                  {registrationDetails.uniqueId}
+                </span>
+                <button
+                  onClick={copyToClipboard}
+                  className="bg-black text-white p-2 hover:bg-red-600 transition-colors border-2 border-transparent hover:border-black"
+                  title="Copy ID"
+                >
+                  {copied ? <Check size={20} /> : <Copy size={20} />}
+                </button>
+              </div>
+              <p className="text-xs font-bold text-red-600 mt-2 uppercase animate-pulse">
+                {copied ? "Copied to Clipboard!" : "Copy this ID for Payment"}
+              </p>
+            </div>
+
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 text-left mb-8">
+              <h4 className="font-bold text-blue-800 flex items-center gap-2">
+                <Info size={18} /> Payment Procedure
+              </h4>
+              <p className="text-sm text-blue-900 mt-1">
+                We have sent the payment details and procedure to your email
+                address <strong>{registrationDetails.email}</strong>. Please use
+                the ID above when completing your payment.
+              </p>
+            </div>
+
+            <button
+              onClick={onBack}
+              className="w-full bg-black text-white px-8 py-3 font-black uppercase hover:bg-teal-600 transition-colors border-2 border-transparent hover:border-black shadow-[4px_4px_0px_rgba(0,0,0,0.3)] hover:translate-y-1 hover:shadow-none"
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fdf6e3] font-sans relative overflow-x-hidden pb-20">
+      {/* Background Elements */}
+      <div className="fixed inset-0 pointer-events-none opacity-5 z-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
+
+      <div className="max-w-2xl mx-auto px-4 pt-12 relative z-10">
+        <button
+          onClick={onBack}
+          className="mb-8 flex items-center gap-2 font-bold text-gray-600 hover:text-black hover:-translate-x-1 transition-all"
+        >
+          <ArrowLeft size={20} /> Back to Kahani
+        </button>
+
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl font-black text-red-700 uppercase tracking-tighter drop-shadow-[2px_2px_0px_#000] mb-2">
+            Ticket Counter
+          </h1>
+          <p className="text-lg font-bold bg-yellow-300 inline-block text-gray-600 px-4 py-1 border-2 border-black rotate-1">
+            Fill details correctly, no retakes allowed!
+          </p>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white border-4 border-black p-6 md:p-10 shadow-[12px_12px_0px_#14b8a6] relative"
+        >
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 bg-red-100 border-3 border-red-600 p-4 rounded-lg">
+              <p className="text-red-800 font-bold text-center">{error}</p>
+            </div>
+          )}
+
+          {/* Decorative Screw Heads */}
+          <div className="absolute top-2 left-2 w-3 h-3 border-2 border-black rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="w-full h-[1px] bg-black rotate-45"></div>
+          </div>
+          <div className="absolute top-2 right-2 w-3 h-3 border-2 border-black rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="w-full h-[1px] bg-black rotate-45"></div>
+          </div>
+          <div className="absolute bottom-2 left-2 w-3 h-3 border-2 border-black rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="w-full h-[1px] bg-black rotate-45"></div>
+          </div>
+          <div className="absolute bottom-2 right-2 w-3 h-3 border-2 border-black rounded-full bg-gray-300 flex items-center justify-center">
+            <div className="w-full h-[1px] bg-black rotate-45"></div>
+          </div>
+
+          <div className="space-y-2">
+            <InputField
+              label="Full Name"
+              icon={User}
+              placeholder="e.g. Rahul Raichand"
+              value={formData.fullName}
+              onChange={(e) => handleChange("fullName", e.target.value)}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                label="Roll Number"
+                icon={Hash}
+                placeholder="e.g. 2105123"
+                value={formData.rollNumber}
+                onChange={(e) => handleChange("rollNumber", e.target.value)}
+              />
+              <InputField
+                label="Gender"
+                icon={Users}
+                options={["Male", "Female"]}
+                value={formData.gender}
+                onChange={(e) => handleChange("gender", e.target.value)}
+              />
+            </div>
+
+            <InputField
+              label="Email Address"
+              icon={Mail}
+              type="email"
+              placeholder="name@university.edu"
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
+
+            <InputField
+              label="Phone Number"
+              icon={Phone}
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={formData.phone}
+              onChange={(e) => handleChange("phone", e.target.value)}
+            />
+
+            <InputField
+              label="Hostel"
+              icon={School}
+              placeholder="e.g. Queens Castle 2"
+              value={formData.university}
+              onChange={(e) => handleChange("university", e.target.value)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full mt-8 bg-red-600 text-white text-xl py-4 font-black uppercase tracking-widest border-4 border-black shadow-[6px_6px_0px_#000] hover:translate-y-1 hover:shadow-[2px_2px_0px_#000] hover:bg-red-700 transition-all flex items-center justify-center gap-3"
+          >
+            Confirm Seat <Ticket size={24} />
+          </button>
+
+          <p className="text-center text-xs text-gray-500 font-bold mt-4 uppercase">
+            * By clicking confirm, you agree to bring your own laptop and
+            charger.
+          </p>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 
 const hiddenSpeakers = [
   {
@@ -357,12 +675,10 @@ const schedule = {
   ],
 };
 
-// --- Main Application ---
+
 
 export default function InnovanceBollywood() {
-  const [currentView, setCurrentView] = useState<
-    "home" | "tickets-coming-soon"
-  >("home");
+  const [currentView, setCurrentView] = useState("home"); // "home" | "register"
   const [activeDay, setActiveDay] = useState<"day1" | "day2">("day1");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState({
@@ -372,7 +688,6 @@ export default function InnovanceBollywood() {
     seconds: 0,
   });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     const targetDate = new Date("2026-01-17T00:00:00");
@@ -401,16 +716,16 @@ export default function InnovanceBollywood() {
   };
 
   const handleGetTicket = () => {
-    setCurrentView("tickets-coming-soon");
+    setCurrentView("register");
     setIsMenuOpen(false);
     window.scrollTo(0, 0);
   };
 
-  if (currentView === "tickets-coming-soon") {
+  if (currentView === "register") {
     return (
       <>
         <AnimationStyles />
-        <TicketComingSoon onBack={() => setCurrentView("home")} />
+        <RegistrationForm onBack={() => setCurrentView("home")} />
       </>
     );
   }
@@ -419,10 +734,10 @@ export default function InnovanceBollywood() {
     <div className="min-h-screen bg-[#fdf6e3] font-sans text-black overflow-x-hidden selection:bg-red-500 selection:text-white relative">
       <AnimationStyles />
 
-      {/* Texture Overlay */}
+     
       <div className="fixed inset-0 pointer-events-none opacity-5 z-50 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
 
-      {/* Floating Elements Background */}
+      
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <Music className="absolute top-20 left-10 text-yellow-500 opacity-20 w-16 h-16 animate-float" />
         <Star className="absolute top-1/2 right-20 text-red-500 opacity-20 w-12 h-12 animate-float-delayed" />
@@ -558,16 +873,14 @@ export default function InnovanceBollywood() {
             className="flex-1 w-full max-w-md relative"
           >
             <div className="bg-black p-2 pb-12 rotate-3 shadow-[15px_15px_0px_rgba(0,0,0,0.2)] hover:rotate-0 transition-transform duration-500">
-              {/* Team image from public folder */}
-              <div
-                className="bg-gray-200 aspect-[4/3] border-2 border-gray-800 flex items-center justify-center overflow-hidden relative group cursor-pointer"
-                onClick={() => setIsImageModalOpen(true)}
-              >
+              {/* Placeholder for the team image, styled like a polaroid */}
+              <div className="bg-gray-200 aspect-[4/3] flex items-center justify-center overflow-hidden relative group">
                 <img
                   src="/iotcardlead.png"
-                  alt="The Crew"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  alt="IOT Card Lead"
+                  className="w-full h-full object-cover ml-8 group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="z-10 text-center p-4"></div>
               </div>
               <div className="text-white text-center font-handwriting text-2xl mt-4">
                 Our Heroes & Heroines
@@ -787,7 +1100,7 @@ export default function InnovanceBollywood() {
         </div>
       </section>
 
-      
+      {/* --- Pricing (Ticket Khidki) --- */}
       <section
         id="tickets"
         className="py-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-teal-600 border-b-4 border-black"
@@ -808,7 +1121,7 @@ export default function InnovanceBollywood() {
                   HOT!
                 </div>
 
-                
+                {/* Cutouts */}
                 <div className="absolute top-1/2 -left-4 w-8 h-8 bg-teal-600 rounded-full border-r-4 border-black"></div>
                 <div className="absolute top-1/2 -right-4 w-8 h-8 bg-teal-600 rounded-full border-l-4 border-black"></div>
 
@@ -825,7 +1138,7 @@ export default function InnovanceBollywood() {
                         ₹499
                       </span>
                       <span className="block text-5xl font-black text-red-600">
-                        ₹249
+                        ₹200
                       </span>
                     </div>
                   </div>
@@ -920,38 +1233,6 @@ export default function InnovanceBollywood() {
         </div>
       </section>
 
-      {/* --- Image Modal --- */}
-      {isImageModalOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300"
-          onClick={() => setIsImageModalOpen(false)}
-        >
-          <div
-            className="relative w-full max-h-screen flex items-center justify-center animate-in zoom-in duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setIsImageModalOpen(false)}
-              className="absolute -top-10 right-0 text-white hover:text-red-500 transition-colors z-10"
-            >
-              <X size={32} />
-            </button>
-
-            {/* Image Container - 2.35:1 aspect ratio */}
-            <div className="bg-black p-2 shadow-[0_0_50px_rgba(255,255,255,0.3)] w-full max-w-7xl">
-              <div className="aspect-[2.35/1] bg-gray-900 flex items-center justify-center overflow-hidden">
-                <img
-                  src="/iotcardlead.png"
-                  alt="The Crew - Full View"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* --- Footer / Countdown --- */}
       <footer className="bg-black text-white py-16 text-center border-b-[20px] border-red-600 relative overflow-hidden">
         {/* Film reel effect borders */}
@@ -1011,7 +1292,7 @@ export default function InnovanceBollywood() {
                 <Info size={20} />
               </a>
             </div>
-            <p>© 2025 IOT LAB. Directed by Web Team</p>
+            <p>© 2025 IOT LAB. Directed by Tech Team.</p>
           </div>
         </div>
       </footer>
