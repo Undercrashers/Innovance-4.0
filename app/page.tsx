@@ -787,7 +787,7 @@ export default function InnovanceBollywood() {
         </div>
       </section>
 
-      {/* --- Pricing (Ticket Khidki) --- */}
+      
       <section
         id="tickets"
         className="py-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-teal-600 border-b-4 border-black"
@@ -808,7 +808,7 @@ export default function InnovanceBollywood() {
                   HOT!
                 </div>
 
-                {/* Cutouts */}
+                
                 <div className="absolute top-1/2 -left-4 w-8 h-8 bg-teal-600 rounded-full border-r-4 border-black"></div>
                 <div className="absolute top-1/2 -right-4 w-8 h-8 bg-teal-600 rounded-full border-l-4 border-black"></div>
 
