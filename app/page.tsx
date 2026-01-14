@@ -657,7 +657,7 @@ const schedule = {
     },
     {
       time: "03:00 PM - 06:00 PM",
-      title: "Entrepreneurship Round Table(Tech Kalesh)",
+      title: "Entrepreneurship Round Table (Tech Kalesh)",
       location: "Conference Hall",
       type: "EMUN",
     },
@@ -1225,7 +1225,7 @@ export default function InnovanceBollywood() {
                       <span className="block text-xs md:text-sm font-bold line-through text-gray-500">
                         ₹499
                       </span>
-                      <span className="block text-3xl sm:text-4xl md:text-6xl font-black text-red-600">
+                      <span className="block text-3xl sm:text-4xl md:text-5xl font-black text-red-600">
                         ₹200
                       </span>
                     </div>
