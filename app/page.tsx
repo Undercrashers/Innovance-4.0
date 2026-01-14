@@ -609,7 +609,7 @@ const features = [
 const faqs = [
   {
     q: "When will Innovance 4.0 release?",
-    a: "The grand premiere is scheduled for January 17, 2026! Mark your calendars.",
+    a: "The grand premiere is scheduled for January 24, 2026! Mark your calendars.",
   },
   {
     q: "Kitne ka ticket hai bhaiya?",
@@ -739,7 +739,7 @@ export default function InnovanceBollywood() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    const targetDate = new Date("2026-01-17T00:00:00");
+    const targetDate = new Date("2026-01-24T00:00:00");
 
     const interval = setInterval(() => {
       const now = new Date();
@@ -795,12 +795,12 @@ export default function InnovanceBollywood() {
       <div className="bg-red-600 text-white py-2 border-b-4 border-black overflow-hidden whitespace-nowrap relative z-40">
         <div className="animate-marquee inline-block font-bold uppercase tracking-widest text-sm md:text-base px-8">
           ★ IOT LAB PRESENTS ★ INNOVANCE 4.0 ★ THE BIGGEST TECH BLOCKBUSTER ★
-          RELEASING JANUARY 17, 2026 ★ HOUSEFULL SOON ★ RESERVE YOUR SEATS NOW ★
+          RELEASING JANUARY 24, 2026 ★ HOUSEFULL SOON ★ RESERVE YOUR SEATS NOW ★
           ADMISSIONS OPEN ★ DON'T MISS THE SHOW ★
         </div>
         <div className="animate-marquee inline-block font-bold uppercase tracking-widest text-sm md:text-base px-8">
           ★ IOT LAB PRESENTS ★ INNOVANCE 4.0 ★ THE BIGGEST TECH BLOCKBUSTER ★
-          RELEASING JANUARY 17, 2026 ★ HOUSEFULL SOON ★ RESERVE YOUR SEATS NOW ★
+          RELEASING JANUARY 24, 2026 ★ HOUSEFULL SOON ★ RESERVE YOUR SEATS NOW ★
           ADMISSIONS OPEN ★ DON'T MISS THE SHOW ★
         </div>
       </div>
@@ -1295,7 +1295,7 @@ export default function InnovanceBollywood() {
               ULTI GINTI SHURU!
             </h2>
             <p className="text-xl mb-4">
-              Get ready for the premiere on January 17, 2026!
+              Get ready for the premiere on January 24, 2026!
             </p>
             <p className="text-lg mb-12 text-gray-400">
               Reserve your spots before the house is full!
