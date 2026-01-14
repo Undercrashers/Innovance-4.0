@@ -171,7 +171,7 @@ export async function sendRegistrationEmail(data: EmailData) {
           <!-- Event Details -->
           <div style="background-color: #fef3c7; padding: 20px; text-align: center; margin: 20px 0; border: 2px solid #000;">
             <h3 style="margin: 0 0 10px 0; color: #92400e;">📅 Event Details</h3>
-            <p style="margin: 5px 0; font-size: 18px; font-weight: bold;">January 17-18, 2026</p>
+            <p style="margin: 5px 0; font-size: 18px; font-weight: bold;">January 24-25, 2026</p>
             <p style="margin: 5px 0; color: #666;">📍 Audi 17 & Lab Complex</p>
           </div>
 

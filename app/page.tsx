@@ -656,34 +656,10 @@ const schedule = {
       type: "Break",
     },
     {
-      time: "03:00 PM",
-      title: "E-MUN Agenda Discussion aur Briefing",
+      time: "03:00 PM - 06:00 PM",
+      title: "Entrepreneur Round Table (EMUN)",
       location: "Conference Hall",
-      type: "Workshop",
-    },
-    {
-      time: "03:20 PM",
-      title: "General Assembly (GSL)",
-      location: "Conference Hall",
-      type: "Interactive",
-    },
-    {
-      time: "04:20 PM",
-      title: "Modified Caucus (Mod Cauc)",
-      location: "Conference Hall",
-      type: "Interactive",
-    },
-    {
-      time: "05:20 PM",
-      title: "Unmodified Caucus (Unmod Cauc)",
-      location: "Conference Hall",
-      type: "Interactive",
-    },
-    {
-      time: "06:00 PM",
-      title: "Block-wise Solution Presentations",
-      location: "Conference Hall",
-      type: "Presentation",
+      type: "EMUN",
     },
   ],
   day2: [
@@ -726,10 +702,65 @@ const schedule = {
   ],
 };
 
+// Video Modal Component - Moved outside to prevent remounting
+const VideoModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  if (!isOpen) return null;
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+      onClick={handleBackdropClick}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="relative w-full max-w-4xl bg-black border-4 border-red-600 shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+          <iframe
+            key="youtube-trailer"
+            className="absolute top-0 left-0 w-full h-full"
+            src="https://www.youtube.com/embed/SHnmj1OM9uk"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="Innovance 4.0 Trailer"
+            loading="lazy"
+          />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+            className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 transition-colors z-10 border-2 border-white rounded"
+            aria-label="Close video"
+          >
+            <X size={28} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function InnovanceBollywood() {
   const [currentView, setCurrentView] = useState("home"); // "home" | "register"
   const [activeDay, setActiveDay] = useState<"day1" | "day2">("day1");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -782,6 +813,7 @@ export default function InnovanceBollywood() {
   return (
     <div className="min-h-screen bg-[#fdf6e3] font-sans text-black overflow-x-hidden selection:bg-red-500 selection:text-white relative">
       <AnimationStyles />
+      <VideoModal isOpen={isVideoOpen} onClose={() => setIsVideoOpen(false)} />
 
       <div className="fixed inset-0 pointer-events-none opacity-5 z-50 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
 
@@ -885,7 +917,7 @@ export default function InnovanceBollywood() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <RevealOnScroll className="flex-1 text-center md:text-left">
             <div className="inline-block bg-black text-white px-4 py-1 font-mono text-sm mb-4 transform -rotate-2">
-              EST. 2025 • IOT LAB PRESENTS
+              EST. 2026 • IOT LAB PRESENTS
             </div>
             <h1 className="text-6xl md:text-8xl font-black text-red-600 leading-[0.9] mb-4 drop-shadow-[6px_6px_0px_#000]">
               INNOVANCE <br />
@@ -897,7 +929,7 @@ export default function InnovanceBollywood() {
               </span>
             </h1>
             <h2 className="text-2xl md:text-4xl font-bold text-teal-900 mb-8 bg-white inline-block px-4 py-2 border-4 border-black transform rotate-1 shadow-[6px_6px_0px_rgba(0,0,0,0.2)]">
-              "Future Ka Faisla, AI Ke Saath!"
+              "When tech meets tadka"
             </h2>
 
             <p className="text-xl md:text-2xl mb-8 font-medium max-w-lg mx-auto md:mx-0">
@@ -913,7 +945,10 @@ export default function InnovanceBollywood() {
                 <Ticket className="group-hover:rotate-12 transition-transform" />{" "}
                 Get Ticket
               </button>
-              <button className="bg-yellow-400 text-black text-xl px-8 py-4 font-black uppercase border-4 border-black shadow-[8px_8px_0px_#000] hover:translate-y-1 hover:shadow-[4px_4px_0px_#000] transition-all flex items-center justify-center gap-2">
+              <button
+                onClick={() => setIsVideoOpen(true)}
+                className="bg-yellow-400 text-black text-xl px-8 py-4 font-black uppercase border-4 border-black shadow-[8px_8px_0px_#000] hover:translate-y-1 hover:shadow-[4px_4px_0px_#000] transition-all flex items-center justify-center gap-2"
+              >
                 <Camera /> Watch Trailer
               </button>
             </div>
@@ -1177,18 +1212,20 @@ export default function InnovanceBollywood() {
                 <div className="absolute top-1/2 -right-4 w-8 h-8 bg-teal-600 rounded-full border-l-4 border-black"></div>
 
                 <div className="border-4 border-dashed border-gray-400 p-6">
-                  <div className="flex justify-between items-start mb-6">
+                  <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
                     <div className="text-left">
                       <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase">
                         Balcony Seat
                       </span>
-                      <h3 className="text-4xl font-black mt-2">REGULAR</h3>
+                      <h3 className="text-2xl md:text-4xl font-black mt-2">
+                        REGULAR
+                      </h3>
                     </div>
                     <div className="text-right">
-                      <span className="block text-sm font-bold line-through text-gray-500">
+                      <span className="block text-xs md:text-sm font-bold line-through text-gray-500">
                         ₹499
                       </span>
-                      <span className="block text-5xl font-black text-red-600">
+                      <span className="block text-3xl md:text-5xl font-black text-red-600">
                         ₹200
                       </span>
                     </div>
@@ -1207,14 +1244,42 @@ export default function InnovanceBollywood() {
                         size={16}
                         className="text-yellow-500 fill-current"
                       />
-                      Hands-on AI/ML Workshop
+                      Entrepeneurial Roundtable
                     </li>
                     <li className="flex items-center gap-2">
                       <Star
                         size={16}
                         className="text-yellow-500 fill-current"
                       />
-                      Build Portfolio Website
+                      Ideathon
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-current"
+                      />
+                      Startup Showcase (WhySchool)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-current"
+                      />
+                      Prize Pool: ₹50,000
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-current"
+                      />
+                      Many Other Incentives
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Star
+                        size={16}
+                        className="text-yellow-500 fill-current"
+                      />
+                      Incubation Offer
                     </li>
                     <li className="flex items-center gap-2">
                       <Star
@@ -1343,7 +1408,7 @@ export default function InnovanceBollywood() {
                 <Info size={20} />
               </a>
             </div>
-            <p>© 2025 IOT LAB. Directed by Tech Team.</p>
+            <p>© 2026 IOT LAB. Directed by Tech Team.</p>
           </div>
         </div>
       </footer>
