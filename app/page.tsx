@@ -657,7 +657,7 @@ const schedule = {
     },
     {
       time: "03:00 PM - 06:00 PM",
-      title: "Entrepreneur Round Table (EMUN)",
+      title: "Tech Kalesh (EMUN)",
       location: "Conference Hall",
       type: "EMUN",
     },
@@ -929,11 +929,11 @@ export default function InnovanceBollywood() {
               </span>
             </h1>
             <h2 className="text-2xl md:text-4xl font-bold text-teal-900 mb-8 bg-white inline-block px-4 py-2 border-4 border-black transform rotate-1 shadow-[6px_6px_0px_rgba(0,0,0,0.2)]">
-              "When tech meets tadka"
+              "When Tech meets Tadka"
             </h2>
 
             <p className="text-xl md:text-2xl mb-8 font-medium max-w-lg mx-auto md:mx-0">
-              Tech, Drama, and Code! Join the biggest blockbuster event of the
+              Tech, Kalesh, and Code! Join the biggest blockbuster event of the
               year.
             </p>
 
@@ -962,9 +962,9 @@ export default function InnovanceBollywood() {
               {/* Placeholder for the team image, styled like a polaroid */}
               <div className="bg-gray-200 aspect-[4/3] flex items-center justify-center overflow-hidden relative group">
                 <img
-                  src="/iotcardlead.png"
+                  src="/iotcardlead.jpeg"
                   alt="IOT Card Lead"
-                  className="w-full h-full object-cover ml-8 group-hover:scale-110 transition-transform duration-700"
+                  className="w-full h-full object-cover ml-5 group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="z-10 text-center p-4"></div>
               </div>
