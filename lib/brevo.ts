@@ -162,7 +162,7 @@ export async function sendRegistrationEmail(data: EmailData) {
               <li>Amount: <strong>₹200</strong></li>
             </ol>
             <div style="text-align: center; margin-top: 20px;">
-              <a href="https://payments.billdesk.com/bdcollect/bd/kiitereg/19100" style="background-color: #dc2626; color: white; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block; font-size: 16px;">
+              <a href="https://payments.billdesk.com/bdcollect/bd/kiitereg/19154" style="background-color: #dc2626; color: white; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block; font-size: 16px;">
                 💳 PAY NOW
               </a>
             </div>
