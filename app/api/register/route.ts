@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import Registration from '@/lib/models/Registration';
+import { addContactToBrevo, sendRegistrationEmail } from '@/lib/brevo';
 
 interface RegistrationData {
   fullName: string;
@@ -60,12 +61,41 @@ export async function POST(request: NextRequest) {
 
     await registration.save();
 
+    const [contactResult, emailResult] = await Promise.all([
+      addContactToBrevo({
+        email: body.email,
+        fullName: body.fullName,
+        phone: body.phone,
+        university: body.university,
+        gender: body.gender,
+        rollNumber: body.rollNumber,
+        uniqueId: body.uniqueId,
+      }),
+      sendRegistrationEmail({
+        email: body.email,
+        fullName: body.fullName,
+        uniqueId: body.uniqueId,
+        rollNumber: body.rollNumber,
+        phone: body.phone,
+        university: body.university,
+      }),
+    ]);
+
+    // Log Brevo results (don't fail registration if Brevo fails)
+    if (!contactResult.success) {
+      console.warn('Failed to add contact to Brevo:', contactResult.error);
+    }
+    if (!emailResult.success) {
+      console.warn('Failed to send email via Brevo:', emailResult.error);
+    }
+
     return NextResponse.json(
       {
         success: true,
         message: 'Registration saved successfully',
         uniqueId: body.uniqueId,
         registrationId: registration._id,
+        emailSent: emailResult.success,
       },
       { status: 201 }
     );
@@ -97,8 +127,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+} // ✅ POST function closes here
 
+// ✅ GET is now a separate top-level export
 export async function GET() {
   try {
     await connectDB();
@@ -119,6 +150,7 @@ export async function GET() {
   }
 }
 
+// ✅ DELETE is now a separate top-level export
 export async function DELETE(request: NextRequest) {
   try {
     await connectDB();
