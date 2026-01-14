@@ -657,7 +657,7 @@ const schedule = {
     },
     {
       time: "03:00 PM - 06:00 PM",
-      title: "Tech Kalesh (EMUN)",
+      title: "Entrepreneurship Round Table(Tech Kalesh)",
       location: "Conference Hall",
       type: "EMUN",
     },
@@ -1212,20 +1212,20 @@ export default function InnovanceBollywood() {
                 <div className="absolute top-1/2 -right-4 w-8 h-8 bg-teal-600 rounded-full border-l-4 border-black"></div>
 
                 <div className="border-4 border-dashed border-gray-400 p-6">
-                  <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+                  <div className="flex flex-col md:flex-row justify-between items-center md:items-start mb-6 gap-4">
                     <div className="text-left">
                       <span className="bg-red-600 text-white px-2 py-1 text-xs font-bold uppercase">
                         Balcony Seat
                       </span>
-                      <h3 className="text-2xl md:text-4xl font-black mt-2">
+                      <h3 className="text-xl md:text-4xl font-black mt-2">
                         REGULAR
                       </h3>
                     </div>
-                    <div className="text-right">
+                    <div className="text-center md:text-right w-full md:w-auto">
                       <span className="block text-xs md:text-sm font-bold line-through text-gray-500">
                         ₹499
                       </span>
-                      <span className="block text-3xl md:text-5xl font-black text-red-600">
+                      <span className="block text-3xl sm:text-4xl md:text-6xl font-black text-red-600">
                         ₹200
                       </span>
                     </div>
