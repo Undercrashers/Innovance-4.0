@@ -42,8 +42,9 @@ export async function addContactToBrevo(data: ContactData) {
     ROLL_NUMBER: data.rollNumber,
     UNIQUE_ID: data.uniqueId,
   };
-  // Add to your list ID (create a list in Brevo dashboard first)
-  createContact.listIds = [2]; // Replace with your actual list ID
+  // Add to your list ID (from environment variable)
+  const listId = parseInt(process.env.BREVO_CONTACT_LIST_ID || '2', 10);
+  createContact.listIds = [listId];
   createContact.updateEnabled = true; // Update if contact already exists
 
   try {
@@ -149,10 +150,6 @@ export async function sendRegistrationEmail(data: EmailData) {
                 <td style="padding: 5px 0; color: #666;"><strong>Phone:</strong></td>
                 <td style="padding: 5px 0;">${data.phone}</td>
               </tr>
-              <tr>
-                <td style="padding: 5px 0; color: #666;"><strong>Hostel:</strong></td>
-                <td style="padding: 5px 0;">${data.university}</td>
-              </tr>
             </table>
           </div>
 
@@ -160,11 +157,15 @@ export async function sendRegistrationEmail(data: EmailData) {
           <div style="background-color: #dbeafe; padding: 20px; border-left: 4px solid #3b82f6; margin: 20px 0;">
             <h3 style="margin: 0 0 10px 0; color: #1e40af;">💳 Payment Instructions</h3>
             <ol style="margin: 0; padding-left: 20px; color: #333; line-height: 1.8;">
-              <li>Pay <strong>₹200</strong> via UPI to: <code style="background: #e5e7eb; padding: 2px 6px;">your-upi@bank</code></li>
-              <li>Use your Unique ID <stroxng>${data.uniqueId}</strong> as the payment reference/note</li>
-              <li>Screenshot the payment confirmation</li>
-              <li>Share screenshot on WhatsApp: <strong>+91 XXXXXXXXXX</strong></li>
+              <li>Click the payment link below to complete your payment</li>
+              <li>Use your Unique ID <strong>${data.uniqueId}</strong> during checkout</li>
+              <li>Amount: <strong>₹200</strong></li>
             </ol>
+            <div style="text-align: center; margin-top: 20px;">
+              <a href="https://payments.billdesk.com/bdcollect/bd/kiitereg/19100" style="background-color: #dc2626; color: white; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block; font-size: 16px;">
+                💳 PAY NOW
+              </a>
+            </div>
           </div>
 
           <!-- Event Details -->
