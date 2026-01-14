@@ -31,7 +31,6 @@ import {
   Check,
 } from "lucide-react";
 
-
 const AnimationStyles = () => (
   <style>{`
     @keyframes float {
@@ -71,7 +70,6 @@ const AnimationStyles = () => (
     }
   `}</style>
 );
-
 
 const RevealOnScroll = ({
   children,
@@ -539,7 +537,6 @@ const RegistrationForm = ({ onBack }: { onBack: () => void }) => {
   );
 };
 
-
 const hiddenSpeakers = [
   {
     title: "MEGA STAR ENTRY",
@@ -635,47 +632,99 @@ const faqs = [
 const schedule = {
   day1: [
     {
-      time: "06:00 PM",
-      title: "Muhurat Shot (Opening)",
-      location: "Audi 17",
-      type: "Ceremony",
+      time: "10:15 AM",
+      title: "Music aur Dance Performance",
+      location: "Main Stage",
+      type: "Performance",
     },
     {
-      time: "07:00 PM",
-      title: "Path to Impact",
-      location: "Audi 17",
+      time: "11:30 AM",
+      title: "Speaker Session",
+      location: "Auditorium",
       type: "Keynote",
     },
     {
-      time: "08:00 PM",
-      title: "Sawaal Jawab (Q&A)",
-      location: "Audi 17",
-      type: "Interactive",
-    },
-  ],
-  day2: [
-    {
-      time: "10:00 AM",
-      title: "Action Begins (Hackathon)",
-      location: "Lab Complex",
+      time: "01:00 PM",
+      title: "Ideathon Problem Statement Briefing",
+      location: "Auditorium",
       type: "Workshop",
     },
     {
-      time: "01:00 PM",
-      title: "Lunch Break (Interval)",
+      time: "01:30 PM",
+      title: "Lunch Break",
       location: "Cafeteria",
       type: "Break",
     },
     {
-      time: "04:00 PM",
-      title: "The Climax (Closing)",
+      time: "03:00 PM",
+      title: "E-MUN Agenda Discussion aur Briefing",
+      location: "Conference Hall",
+      type: "Workshop",
+    },
+    {
+      time: "03:20 PM",
+      title: "General Assembly (GSL)",
+      location: "Conference Hall",
+      type: "Interactive",
+    },
+    {
+      time: "04:20 PM",
+      title: "Modified Caucus (Mod Cauc)",
+      location: "Conference Hall",
+      type: "Interactive",
+    },
+    {
+      time: "05:20 PM",
+      title: "Unmodified Caucus (Unmod Cauc)",
+      location: "Conference Hall",
+      type: "Interactive",
+    },
+    {
+      time: "06:00 PM",
+      title: "Block-wise Solution Presentations",
+      location: "Conference Hall",
+      type: "Presentation",
+    },
+  ],
+  day2: [
+    {
+      time: "10:15 AM",
+      title: "Guest Speaker Session",
+      location: "Auditorium",
+      type: "Keynote",
+    },
+    {
+      time: "12:00 PM",
+      title: "Pitching - Pehla Half",
+      location: "Main Stage",
+      type: "Presentation",
+    },
+    {
+      time: "01:30 PM",
+      title: "Lunch Break",
+      location: "Cafeteria",
+      type: "Break",
+    },
+    {
+      time: "03:00 PM",
+      title: "Pitching - Doosra Half",
+      location: "Main Stage",
+      type: "Presentation",
+    },
+    {
+      time: "05:00 PM",
+      title: "Music aur Dance Performance",
+      location: "Main Stage",
+      type: "Performance",
+    },
+    {
+      time: "06:00 PM",
+      title: "Prize Distribution aur Felicitation",
       location: "Main Stage",
       type: "Ceremony",
     },
   ],
 };
-
-
 
 export default function InnovanceBollywood() {
   const [currentView, setCurrentView] = useState("home"); // "home" | "register"
@@ -734,10 +783,8 @@ export default function InnovanceBollywood() {
     <div className="min-h-screen bg-[#fdf6e3] font-sans text-black overflow-x-hidden selection:bg-red-500 selection:text-white relative">
       <AnimationStyles />
 
-     
       <div className="fixed inset-0 pointer-events-none opacity-5 z-50 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
 
-      
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <Music className="absolute top-20 left-10 text-yellow-500 opacity-20 w-16 h-16 animate-float" />
         <Star className="absolute top-1/2 right-20 text-red-500 opacity-20 w-12 h-12 animate-float-delayed" />
@@ -765,7 +812,11 @@ export default function InnovanceBollywood() {
             className="flex items-center gap-2 cursor-pointer group"
             onClick={() => setCurrentView("home")}
           >
-            <Film className="w-8 h-8 md:w-10 md:h-10 text-red-700 fill-current group-hover:rotate-12 transition-transform" />
+            <img
+              src="/apple-touch-icon.png"
+              alt="Innovance"
+              className="w-8 h-8 md:w-10 md:h-10 group-hover:rotate-12 transition-transform"
+            />
             <span className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-red-700 drop-shadow-[2px_2px_0px_#fff]">
               Innovance Talkies
             </span>
