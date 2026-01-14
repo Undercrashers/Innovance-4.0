@@ -471,7 +471,7 @@ const RegistrationForm = ({ onBack }: { onBack: () => void }) => {
             <InputField
               label="Full Name"
               icon={User}
-              placeholder="e.g. Rahul Raichand"
+              placeholder="e.g. Ananya Sharma"
               value={formData.fullName}
               onChange={(e) => handleChange("fullName", e.target.value)}
             />
