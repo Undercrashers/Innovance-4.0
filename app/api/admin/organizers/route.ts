@@ -1,4 +1,4 @@
-// app/api/admin/users/route.ts
+// app/api/admin/organizers/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Registration from "@/lib/models/Registration";
@@ -14,14 +14,14 @@ export async function GET(req: Request) {
 
     await connectDB();
 
-    const users = await Registration.find({ role: { $ne: "ORGANIZER" } })
-      .select("fullName rollNumber email phone uniqueId university isPaid approvedAt timestamp")
+    const users = await Registration.find({})
+      .select("fullName rollNumber email phone uniqueId university role isPaid approvedAt timestamp")
       .sort({ createdAt: -1 })
       .lean();
 
     return NextResponse.json({ users }, { status: 200 });
   } catch (err: any) {
-    console.error("Admin get users error:", err);
+    console.error("Admin get organizers error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to fetch users" },
       { status: 500 }
