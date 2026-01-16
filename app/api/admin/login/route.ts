@@ -1,28 +1,38 @@
 import { NextResponse } from "next/server";
-import { ADMINS } from "@/lib/adminList.js";
 import { signAdminToken } from "@/lib/adminAuth.js";
 
-export async function POST(req:any) {
+export async function POST(req: any) {
   try {
     const { username, password } = await req.json();
 
     if (!username || !password) {
-      return NextResponse.json({ error: "Username & password required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Username & password required" },
+        { status: 400 }
+      );
     }
 
-    const admin = ADMINS.find(
-      (a) => a.username === username && a.password === password
-    );
-
-    if (!admin) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+    // Compare with environment variables
+    if (
+      username !== process.env.ADMIN_USERNAME ||
+      password !== process.env.ADMIN_PASSWORD
+    ) {
+      return NextResponse.json(
+        { error: "Invalid credentials" },
+        { status: 401 }
+      );
     }
+
+    const admin = {
+      username: process.env.ADMIN_USERNAME,
+      role: process.env.ADMIN_ROLE,
+    };
 
     const token = signAdminToken(admin);
 
     const res = NextResponse.json({
       message: "Login successful",
-      admin: { username: admin.username, role: admin.role },
+      admin,
     });
 
     res.cookies.set("admin_token", token, {
