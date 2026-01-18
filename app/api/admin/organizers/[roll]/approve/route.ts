@@ -1,16 +1,12 @@
-// app/api/admin/users/[roll]/approve/route.ts
+// app/api/admin/organizers/[roll]/approve/route.ts
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Registration from "@/lib/models/Registration";
 import { verifyAdminToken } from "@/lib/adminAuth";
 
-export async function PATCH(
-  req: Request,
-  context: { params: Promise<{ roll: string }> } // <- note Promise here
-) {
+export async function PATCH(req: Request, context: { params: Promise<{ roll: string }> }) {
   try {
-    const { roll } = await context.params; // <- await the params
-
+    const { roll } = await context.params;
     if (!roll) {
       return NextResponse.json({ error: "roll param required" }, { status: 400 });
     }
@@ -29,24 +25,26 @@ export async function PATCH(
     }
 
     user.isPaid = true;
+    user.role = "ORGANIZER";
     user.approvedAt = new Date();
     await user.save();
 
     return NextResponse.json(
       {
-        message: "User approved",
+        message: "Organizer approved",
         user: {
           rollNumber: user.rollNumber,
           isPaid: user.isPaid,
+          role: user.role,
           approvedAt: user.approvedAt,
         },
       },
       { status: 200 }
     );
   } catch (err: any) {
-    console.error("Admin approve error:", err);
+    console.error("Admin organizer approve error:", err);
     return NextResponse.json(
-      { error: err.message || "Failed to approve" },
+      { error: err.message || "Failed to approve organizer" },
       { status: 500 }
     );
   }
