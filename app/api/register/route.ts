@@ -127,9 +127,7 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-} // ✅ POST function closes here
-
-// ✅ GET is now a separate top-level export
+} 
 export async function GET() {
   try {
     await connectDB();
@@ -150,7 +148,6 @@ export async function GET() {
   }
 }
 
-// ✅ DELETE is now a separate top-level export
 export async function DELETE(request: NextRequest) {
   try {
     await connectDB();

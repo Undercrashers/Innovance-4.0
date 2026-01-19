@@ -1,4 +1,3 @@
-// app/admin/organizers/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -23,9 +22,14 @@ type Toast = {
   progress: number;
 };
 
+type AdminPermissions = {
+  canApprove: boolean;
+};
+
 export default function OrganizerDashboard() {
   const router = useRouter();
   const [users, setUsers] = useState<OrganizerUser[]>([]);
+  const [adminPermissions, setAdminPermissions] = useState<AdminPermissions>({ canApprove: true });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -63,6 +67,15 @@ export default function OrganizerDashboard() {
     try {
       setLoading(true);
       setError("");
+      
+      // Fetch permissions first
+      const adminRes = await fetch("/api/admin/permissions", {
+        credentials: "include",
+      });
+      const adminData = await adminRes.json().catch(() => null);
+      setAdminPermissions(adminData || { canApprove: true });
+      
+      // Fetch organizers
       const res = await fetch("/api/admin/organizers", {
         method: "GET",
         credentials: "include",
@@ -167,14 +180,22 @@ export default function OrganizerDashboard() {
     }
   };
 
-  const openApproveModal = (user: OrganizerUser) =>
+  const openApproveModal = (user: OrganizerUser) => {
+    if (!adminPermissions.canApprove) {
+      addToast("No permission to approve organizers", "error");
+      return;
+    }
     setConfirmAction({ type: "approve", user });
+  };
+
   const openRemoveModal = (user: OrganizerUser) =>
     setConfirmAction({ type: "remove", user });
+  
   const closeModal = () => {
     if (!actionLoading) setConfirmAction(null);
   };
 
+  // Updated PendingRow - conditional approve button
   const PendingRow = ({ u }: { u: OrganizerUser }) => (
     <tr className="even:bg-white odd:bg-gray-50">
       <td className="p-3 text-sm text-gray-800 font-medium">{u.fullName}</td>
@@ -182,17 +203,22 @@ export default function OrganizerDashboard() {
       <td className="p-3 text-sm text-gray-700">{u.email}</td>
       <td className="p-3 text-sm text-gray-700">{u.phone}</td>
       <td className="p-3 text-sm text-gray-700">{u.university}</td>
-      <td className="p-3">
-        <button
-          onClick={() => openApproveModal(u)}
-          className="px-4 py-2 text-sm rounded-lg text-white bg-purple-600 hover:bg-purple-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-300 transition-all duration-200 w-full sm:w-auto min-h-[40px] sm:min-h-auto"
-        >
-          Make Organizer
-        </button>
-      </td>
+      {adminPermissions.canApprove ? (
+        <td className="p-3">
+          <button
+            onClick={() => openApproveModal(u)}
+            className="px-4 py-2 text-sm rounded-lg text-white bg-purple-600 hover:bg-purple-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-purple-300 transition-all duration-200 w-full sm:w-auto min-h-[40px] sm:min-h-auto"
+          >
+            Make Organizer
+          </button>
+        </td>
+      ) : (
+        <td className="p-3 text-sm text-gray-500 italic text-center">-</td>
+      )}
     </tr>
   );
 
+  // ApprovedRow - no changes needed for remove permission
   const ApprovedRow = ({ u }: { u: OrganizerUser }) => (
     <tr className="even:bg-white odd:bg-gray-50">
       <td className="p-3 text-sm text-gray-800 font-medium">{u.fullName}</td>
@@ -218,11 +244,18 @@ export default function OrganizerDashboard() {
       <div className="min-h-screen bg-gray-100 py-4 sm:py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
-            {/* Header - Mobile Perfect */}
+            {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 gap-4">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                Organizer Approvals
-              </h1>
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                  Organizer Approvals
+                </h1>
+                {!adminPermissions.canApprove && (
+                  <p className="text-sm text-yellow-600 mt-1 font-medium">
+                    👤 View-only mode (limited permissions)
+                  </p>
+                )}
+              </div>
               <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-center lg:justify-end">
                 <button
                   onClick={() => router.push('/admin/dashboard')}
@@ -239,7 +272,7 @@ export default function OrganizerDashboard() {
               </div>
             </div>
 
-            {/* Search - Mobile Perfect */}
+            {/* Search */}
             <div className="mb-6 lg:mb-8">
               <div className="flex flex-col sm:flex-row gap-3">
                 <input
@@ -260,7 +293,7 @@ export default function OrganizerDashboard() {
               </div>
             </div>
 
-            {/* Pending Organizers - Tables Unchanged */}
+            {/* Pending Organizers */}
             <section className="mb-8 lg:mb-12">
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center gap-2">
                 Pending Organizers <span className="text-sm lg:text-base text-gray-600">({pendingOrganizers.length})</span>
@@ -283,7 +316,9 @@ export default function OrganizerDashboard() {
                         <th className="p-3 text-sm font-semibold text-gray-700">Email</th>
                         <th className="p-3 text-sm font-semibold text-gray-700">Phone</th>
                         <th className="p-3 text-sm font-semibold text-gray-700">Hostel</th>
-                        <th className="p-3 text-sm font-semibold text-gray-700">Action</th>
+                        {adminPermissions.canApprove && (
+                          <th className="p-3 text-sm font-semibold text-gray-700">Action</th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
@@ -296,7 +331,7 @@ export default function OrganizerDashboard() {
               )}
             </section>
 
-            {/* Approved Organizers - Tables Unchanged */}
+            {/* Approved Organizers */}
             <section>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 mb-4 lg:mb-6 flex items-center gap-2">
                 Approved Organizers <span className="text-sm lg:text-base text-gray-600">({approvedOrganizers.length})</span>
@@ -330,7 +365,7 @@ export default function OrganizerDashboard() {
           </div>
         </div>
 
-        {/* ✨ ULTRA-FAST ANIMATED MODAL */}
+        {/* ULTRA-FAST ANIMATED MODAL */}
         {confirmAction && (
           <div className="fixed inset-0 z-[99] flex items-center justify-center p-4 animate-in slide-in-from-bottom duration-200">
             <div

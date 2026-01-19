@@ -1,4 +1,3 @@
-// app/admin/dashboard/page.tsx - ULTRA FAST TOASTS
 "use client";
 
 import { useEffect, useState } from "react";
@@ -23,9 +22,14 @@ type Toast = {
   progress: number;
 };
 
+type AdminPermissions = {
+  canApprove: boolean;
+};
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [users, setUsers] = useState<Registration[]>([]);
+  const [adminPermissions, setAdminPermissions] = useState<AdminPermissions>({ canApprove: true });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -69,8 +73,7 @@ export default function AdminDashboard() {
         credentials: "include",
       });
       const data = await res.json().catch(() => null);
- console.log("🔥 RAW API DATA:", data.users?.[0]);
-    console.log("🔥 uniqueId exists?", data.users?.[0]?.uniqueId);
+      
       if (res.status === 401) {
         router.push("/admin/login");
         return;
@@ -79,6 +82,13 @@ export default function AdminDashboard() {
         throw new Error(data?.error || "Failed to load users");
       }
 
+      // Fetch admin permissions
+      const adminRes = await fetch("/api/admin/permissions", {
+        credentials: "include",
+      });
+      const adminData = await adminRes.json().catch(() => null);
+      
+      setAdminPermissions(adminData || { canApprove: true });
       setUsers(Array.isArray(data.users) ? data.users : []);
     } catch (err: any) {
       console.error("fetchUsers error:", err);
@@ -180,14 +190,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const openApproveModal = (user: Registration) =>
+  const openApproveModal = (user: Registration) => {
+    if (!adminPermissions.canApprove) {
+      addToast("No permission to approve users", "error");
+      return;
+    }
     setConfirmAction({ type: "approve", user });
+  };
+
   const openRemoveModal = (user: Registration) =>
     setConfirmAction({ type: "remove", user });
+  
   const closeModal = () => {
     if (!actionLoading) setConfirmAction(null);
   };
 
+  // Updated ParticipantRow - conditional approve button
   const ParticipantRow = ({ u }: { u: Registration }) => (
     <tr className="even:bg-white odd:bg-gray-50">
       <td className="p-3 text-sm text-gray-800 font-medium">{u.fullName}</td>
@@ -195,17 +213,22 @@ export default function AdminDashboard() {
       <td className="p-3 text-sm text-gray-700">{u.email}</td>
       <td className="p-3 text-sm text-gray-700">{u.phone}</td>
       <td className="p-3 text-sm text-gray-700">{u.uniqueId}</td>
-      <td className="p-3">
-        <button
-          onClick={() => openApproveModal(u)}
-          className="px-4 py-2 text-sm rounded-lg text-white bg-green-600 hover:bg-green-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-300 transition-all duration-200 w-full sm:w-auto min-h-[40px] sm:min-h-auto"
-        >
-          Approve
-        </button>
-      </td>
+      {adminPermissions.canApprove ? (
+        <td className="p-3">
+          <button
+            onClick={() => openApproveModal(u)}
+            className="px-4 py-2 text-sm rounded-lg text-white bg-green-600 hover:bg-green-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-300 transition-all duration-200 w-full sm:w-auto min-h-[40px] sm:min-h-auto"
+          >
+            Approve
+          </button>
+        </td>
+      ) : (
+        <td className="p-3 text-sm text-gray-500 italic text-center">-</td>
+      )}
     </tr>
   );
 
+  // Updated ApprovedRow - no changes needed for remove
   const ApprovedRow = ({ u }: { u: Registration }) => (
     <tr className="even:bg-white odd:bg-gray-50">
       <td className="p-3 text-sm text-gray-800 font-medium">{u.fullName}</td>
@@ -233,9 +256,16 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl shadow-xl p-4 sm:p-6 lg:p-8">
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 gap-4">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
+                  Admin Dashboard
+                </h1>
+                {!adminPermissions.canApprove && (
+                  <p className="text-sm text-yellow-600 mt-1 font-medium">
+                    👤 View-only mode (limited permissions)
+                  </p>
+                )}
+              </div>
               <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-center lg:justify-end">
                 <button
                   onClick={fetchUsers}
@@ -273,7 +303,7 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Participants Section - TABLES UNCHANGED */}
+            {/* Participants Section */}
             <section className="mb-8 lg:mb-12">
               <div className="flex items-center justify-between mb-4 lg:mb-6">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900">
@@ -298,7 +328,9 @@ export default function AdminDashboard() {
                         <th className="p-3 text-sm font-semibold text-gray-700">Email</th>
                         <th className="p-3 text-sm font-semibold text-gray-700">Phone Number</th>
                         <th className="p-3 text-sm font-semibold text-gray-700">KID</th>
-                        <th className="p-3 text-sm font-semibold text-gray-700">Status</th>
+                        {adminPermissions.canApprove && (
+                          <th className="p-3 text-sm font-semibold text-gray-700">Action</th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
@@ -311,7 +343,7 @@ export default function AdminDashboard() {
               )}
             </section>
 
-            {/* Approved Users Section - TABLES UNCHANGED */}
+            {/* Approved Users Section */}
             <section>
               <div className="flex items-center justify-between mb-4 lg:mb-6">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900">
@@ -396,7 +428,7 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* ⚡ ULTRA-FAST ANIMATED TOASTS (100ms entry, 1.5s total) */}
+      {/* ULTRA-FAST ANIMATED TOASTS */}
       <div className="fixed top-6 right-4 sm:right-6 z-[100] flex flex-col gap-2 max-w-sm w-11/12 sm:w-auto">
         {toasts.map((toast) => (
           <div
@@ -407,16 +439,11 @@ export default function AdminDashboard() {
                 : "bg-gradient-to-br from-red-500/95 to-red-600/95 text-white border-red-400/50"
             }`}
           >
-            {/* Fast pulse dot */}
             <div className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white/90 rounded-full animate-ping-fast" />
-            
-            {/* Compact content */}
             <div className="flex items-center gap-2.5 pr-10 relative z-10">
               <div className="w-2 h-2 bg-white/95 rounded-full animate-pulse" />
               <span className="font-bold text-sm leading-tight tracking-wide">{toast.message}</span>
             </div>
-            
-            {/* ⚡ SUPER FAST PROGRESS BAR */}
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-white/95 to-white/60 shadow-lg rounded-full transition-all duration-50 ease-linear"
