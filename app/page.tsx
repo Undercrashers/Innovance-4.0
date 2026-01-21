@@ -91,7 +91,7 @@ const RevealOnScroll = ({
           observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: "50px" }
+      { threshold: 0.1, rootMargin: "50px" },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -188,7 +188,7 @@ interface InputFieldProps {
   placeholder?: string;
   value: string;
   onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   options?: string[] | null;
 }
@@ -348,7 +348,7 @@ const RegistrationForm = ({ onBack }: { onBack: () => void }) => {
         .catch((errorObj) => {
           console.error("Registration error:", errorObj);
           setError(
-            errorObj.message || "Registration failed. Please try again."
+            errorObj.message || "Registration failed. Please try again.",
           );
         });
     } else {
@@ -796,9 +796,8 @@ export default function InnovanceBollywood() {
   };
 
   const handleGetTicket = () => {
-    setCurrentView("register");
-    setIsMenuOpen(false);
-    window.scrollTo(0, 0);
+    window.location.href =
+      "https://payments.billdesk.com/bdcollect/bd/kiitereg/19154";
   };
 
   if (currentView === "register") {
